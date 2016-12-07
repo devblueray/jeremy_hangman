@@ -23,11 +23,16 @@ end
 
 post '/player_2_name' do
 	session[:player_2_name] = params[:player_2]
+	write_to_csv(session[:player_2_name],session[:game].word)
     erb :player_2_name
     redirect '/play_game'
 end
 
 get '/play_game' do
+    @player_name = session[:player_2_name]
+    @player_word = session[:game].word
+    puts "Player: #{session[:player_2_name]}"
+    puts "Word: #{session[:game].word}"
     erb :play_game, :locals => {:guessed_letters => session[:game].guessed_letters, :blank_word => session[:game].blank_word}
     #the above gives you access to guessed_letters and blank_word, these point to the hangman class.rb and make them able to pass to the views
 end
@@ -57,8 +62,7 @@ get '/winner' do
 end
 
 def write_to_csv(player_2_name, keyword)
-    CSV.open("file.csv", "a") do |csv|
-    csv << ["#{:player_2_name}" + "," + "#{keyword}"]
+    CSV.open("file.csv", "a") do |row|
+    row << ["#{player_2_name}","#{keyword}"]
 end
-write_to_csv(session[:player_name],session[:game].word)
 end
